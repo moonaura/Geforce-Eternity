@@ -1,0 +1,63 @@
+{
+  "name": "geforce-eternity",
+  "version": "1.1.1",
+  "description": "Elevate your GeForce NOW experience!",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "build": "tsc && node scripts/copy-assets.js",
+    "start": "npm run build && electron .",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "discord-rpc": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "electron": "^39.3.0",
+    "electron-builder": "^26.4.0",
+    "typescript": "^5.9.3"
+  },
+  "build": {
+    "appId": "com.moonaura.geforce-eternity",
+    "productName": "GeForce Eternity",
+    "directories": {
+      "buildResources": "src/assets/resources",
+      "output": "builds"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "artifactName": "${productName}-windows-${version}-${arch}.${ext}",
+      "icon": "src/assets/resources/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "artifactName": "${productName}-mac-${version}-${arch}.${ext}",
+      "icon": "src/assets/resources/icon.icns",
+      "category": "public.app-category.games"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm",
+        "zip"
+      ],
+      "artifactName": "${productName}-linux-${version}-${arch}.${ext}",
+      "icon": "src/assets/resources/icon_256.png",
+      "maintainer": "MoonAura",
+      "category": "Game"
+    }
+  }
+}
