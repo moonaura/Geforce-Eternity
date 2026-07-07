@@ -1,6 +1,6 @@
 {
   "name": "geforce-eternity",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Elevate your GeForce NOW experience!",
   "main": "dist/main/index.js",
   "scripts": {

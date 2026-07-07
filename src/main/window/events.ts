@@ -76,34 +76,53 @@ export function registerWindowEvents(win: BrowserWindow): void {
             setTimeout(() => {
                 if (win.isDestroyed() || !isSpoofing) return;
 
-                // Aggressive Multi-Key Pulse (F13 + F14)
                 win.webContents.executeJavaScript(`
                     (function() {
-                        const target = document.querySelector('video') || document.querySelector('canvas') || document.body;
+                        const target = document.querySelector('video') || 
+                                    document.querySelector('canvas') || 
+                                    document.body;
+
                         target.focus();
-                        const keys = [
-                            { key: 'F13', code: 'F13', keyCode: 124 },
-                            { key: 'F14', code: 'F14', keyCode: 125 }
-                        ];
-                        keys.forEach((k, i) => {
-                            setTimeout(() => {
-                                target.dispatchEvent(new KeyboardEvent('keydown', { ...k, bubbles: true }));
-                                setTimeout(() => target.dispatchEvent(new KeyboardEvent('keyup', { ...k, bubbles: true })), 150);
-                            }, i * 200);
-                        });
+
+                        const rect = target.getBoundingClientRect();
+                        const x = rect.left + rect.width / 2;
+                        const y = rect.top + rect.height / 2;
+
+                        target.dispatchEvent(new MouseEvent('mousemove', {
+                            bubbles: true,
+                            clientX: x,
+                            clientY: y
+                        }));
+
+                        setTimeout(() => {
+                            target.dispatchEvent(new MouseEvent('mousemove', {
+                                bubbles: true,
+                                clientX: x + 5,
+                                clientY: y + 5
+                            }));
+                        }, 100);
                     })();
-                `).catch(() => { });
+                `).catch(() => {});
 
-                // Native backup pulses
-                const sendNative = (key: any) => {
-                    win.webContents.sendInputEvent({ type: 'keyDown', keyCode: key });
-                    setTimeout(() => {
-                        if (!win.isDestroyed()) win.webContents.sendInputEvent({ type: 'keyUp', keyCode: key });
-                    }, 150);
-                };
+                // Native Electron mouse event
+                const bounds = win.getBounds();
 
-                sendNative('F13');
-                setTimeout(() => sendNative('F14'), 200);
+                win.webContents.sendInputEvent({
+                    type: 'mouseMove',
+                    x: Math.floor(bounds.width / 2),
+                    y: Math.floor(bounds.height / 2)
+                });
+
+                setTimeout(() => {
+                    if (!win.isDestroyed()) {
+                        win.webContents.sendInputEvent({
+                            type: 'mouseMove',
+                            x: Math.floor(bounds.width / 2) + 5,
+                            y: Math.floor(bounds.height / 2) + 5
+                        });
+                    }
+                }, 100);
+
             }, 100);
         }
 
